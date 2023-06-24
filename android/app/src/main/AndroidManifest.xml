@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.sevima_schedulemaker">
    <application
-        android:label="sevima_schedulemaker"
+        android:label="Schedule Maker"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
