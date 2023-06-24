@@ -43,14 +43,21 @@ class _MyHomePageState extends State<MyHomePage> {
   static const List<String> _days = ['1','3','5','7'];
   final TextEditingController _inputController = TextEditingController();
   List<FileSystemEntity> file = [];
-  FocusNode _inputFocus = FocusNode();
+  final FocusNode _inputFocus = FocusNode();
   bool _showMenu = true;
+  bool _loading = false;
   String _selectedDay = '1';
   var jadwal = {};
 
 
 
   createSchedule() async{
+    setState(() {
+      _inputFocus.unfocus();
+      _showMenu = false;
+      _loading = true;
+    });
+    try{
   final response = await http.post(
       Uri.parse('https://api.openai.com/v1/completions'),
       headers: {
@@ -81,14 +88,21 @@ class _MyHomePageState extends State<MyHomePage> {
         }
           );
       }
+    }else{
+      jadwal = jadwal_temp;
     }
-    debugPrint(jadwal.toString());
-    debugPrint(jadwal.length.toString());
     setState(() {
       jadwal;
       _inputController.text = '';
-      _showMenu = false;
+      _loading = false;
+      _write(json.encode(jadwal), 'jadwal');
     });
+    }catch(e){
+      setState(() {
+        _loading = false;
+        _showToast(context, 'Terjadi Masalah Cek Koneksi Internet lalu Coba Lagi!', 50);
+      });
+    }
   }
    _read(String fileName) async {
     try {
@@ -130,6 +144,21 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+
+
+  void _showToast(BuildContext context, String text, var margin) {
+    final scaffold = ScaffoldMessenger.of(context);
+    scaffold.showSnackBar(
+      SnackBar(
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: Colors.red,
+        margin: EdgeInsets.only(bottom: margin),
+        content: Text(text, textAlign: TextAlign.center,),
+      ),
+    );
+  }
+
+
   @protected
   void initState() {
     super.initState();
@@ -169,14 +198,17 @@ class _MyHomePageState extends State<MyHomePage> {
                     margin: const EdgeInsets.all(10),
                     height: 150,
                     width: maxW - 20,
-                    color: Colors.red.shade300,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: Colors.red.shade300,
+                    ),
                     child: Column(
                       children: [
                         Align(
                           alignment: Alignment.topCenter,
                           child: Container(
-                            margin: EdgeInsets.all(8),
-                            child: Text('${title}', style: TextStyle(fontSize: 18),))),
+                            margin: const EdgeInsets.all(8),
+                            child: Text('$title', style: TextStyle(fontSize: 18),))),
                         Column(
                           children: List.generate(values.length, ((index2) {
                           final number = (index2+1).toString();
@@ -214,8 +246,8 @@ class _MyHomePageState extends State<MyHomePage> {
                             focusNode: _inputFocus,
                             textAlign: TextAlign.center,
                             decoration: const InputDecoration(
-                              hintText: "example belajar HTML",
-                              border: const OutlineInputBorder()
+                              hintText: "belajar HTML",
+                              border:  OutlineInputBorder()
                              ),
                              onEditingComplete: ((){
                               setState(() {
@@ -270,7 +302,13 @@ class _MyHomePageState extends State<MyHomePage> {
               )
               ) : Container()
         ],
-        ),        
+        ),
+        _loading ? Container(
+          width: maxW,
+          height: maxH,
+          color: Colors.red.shade700,
+          child: Center(child: Text("Loading...", style: TextStyle(fontSize: 18),)),
+        ) : Container()       
         ]
       ),
       floatingActionButton: Align(
