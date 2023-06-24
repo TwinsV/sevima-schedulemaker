@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:http/http.dart' as http;
 
-void main() {
+
+Future<void> main() async{
+  await dotenv.load();
   runApp(const MyApp());
 }
 
@@ -30,11 +34,16 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final List<int> _days = [1,3,7,30];
-  final _inputController = TextEditingController();
+  static const List<String> _days = ['1','3','5','7'];
+  TextEditingController _inputController = TextEditingController();
+  FocusNode _inputFocus = FocusNode();
   bool _showMenu = true;
-  
-  
+  String _selectedDay = '1';
+  @protected
+  void initState() {
+    super.initState();
+    
+  }
   @override
   Widget build(BuildContext context) {
     double maxW = MediaQuery.of(context).size.width;
@@ -64,30 +73,73 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             
             _showMenu ? Expanded(
-              flex: 3,
+              flex: _inputFocus.hasFocus ? 12 : 3,
               child: Container(
-                color: Colors.blue,
+                color: Colors.white70,
                 child: Column(
                   children: [
                     Row(
                       children: [
                         Text('Buat Jadwal '),
                         Container(
-                          height: ((maxH/15)*1),
-                          width: maxW-150,
+                          height: ((maxH/15)*1) - 5,
+                          width: maxW-175,
                           margin: EdgeInsets.only(top: 10, left:5),
                           child: TextFormField(
                             controller: _inputController,
+                            focusNode: _inputFocus,
                             textAlign: TextAlign.center,
                             decoration: InputDecoration(
                               hintText: "example belajar HTML",
                               border: OutlineInputBorder()
                              ),
+                             onEditingComplete: ((){
+                              setState(() {
+                                _inputFocus.unfocus();
+                              });
+                             }),
                           ),
                         ),
+                        
+                        DropdownButton<String>(
+                          value: _selectedDay,
+                          items: _days.map((String value){
+                            return DropdownMenuItem(
+                              value: value,
+                              child: Container(
+                                width: 50,
+                                height: ((maxH/15)*1) - 5,
+                                child: Center(child: Text(" " +value+' Hari', textAlign: TextAlign.center,)),
+                              ));
+                        }).toList(), onChanged: ((_newValue){
+                          setState(() {
+                            if(_newValue != null){
+                              _selectedDay = _newValue;
+                            }
+                          });
+                        })),
                       ],
-                    )
-                  ]),
+                    ),
+
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: List.generate(2, ((index) {
+                      return Container(
+                        width: maxW/3,
+                        height: ((maxH/15)*1) - 5,
+                        child: ElevatedButton(
+                          onPressed: (() {
+                          }),
+                          child: Text(
+                            index == 0 ? 'Info' : 'Generate'  
+                          )),
+                      );
+                    }))
+                    ,)
+
+                  ]
+                  ),
               )
               ) : Container()
         ],
@@ -97,7 +149,7 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButton: Align(
         alignment:_showMenu ? Alignment.bottomCenter : Alignment.bottomRight ,
         child: Container(
-          margin: _showMenu ? EdgeInsets.only(bottom: ((maxH/15)*3)-50) : EdgeInsets.zero,
+          margin: _showMenu && _inputFocus.hasFocus ? EdgeInsets.only(bottom: ((maxH/15)*3)-30) : _showMenu ? EdgeInsets.only(bottom: ((maxH/15)*3)-50) : EdgeInsets.zero,
           child: FloatingActionButton(
             mini: true,
               onPressed: (() {
@@ -118,4 +170,8 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
+}
+
+createSchedule() async{
+  // final response = await http()
 }
