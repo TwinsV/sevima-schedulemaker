@@ -1,0 +1,37 @@
+{
+    "Hari 1": [
+      "Mempelajari dasar HTML",
+      "Membuat halaman HTML",
+      "Menambahkan gambar",
+      "Menerapkan atribut HTML",
+      "Menggunakan tag semantik"
+    ],
+    "Hari 2": [
+      "Tautan internal dan eksternal",
+      "Tag semantik HTML",
+      "Membuat daftar (unordered dan ordered)",
+      "Menggunakan tabel",
+      "Menggunakan formulir"
+    ],
+    "Hari 3": [
+      "Layout dengan CSS",
+      "Responsif dan media queries",
+      "Menyisipkan video dan audio",
+      "Menggunakan iframe",
+      "Gambar latar (background image)"
+    ],
+    "Hari 4": [
+      "Komentar dalam HTML",
+      "Meta tag untuk informasi halaman",
+      "HTML entities",
+      "Validasi HTML",
+      "Dropdown menu dengan HTML dan CSS"
+    ],
+    "Hari 5": [
+      "Semantic HTML",
+      "SVG dalam HTML",
+      "Canvas untuk menggambar",
+      "Animasi dengan CSS dan JavaScript",
+      "Praktik terbaik penulisan kode HTML"
+    ]
+  }
